@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:http="http://www.springframework.org/schema/c"
+
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+        <bean id="sessionfactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+                <property name="configLocation" value="classpath:hibernate.hbm.xml"/>
+                <property name="dataSource" ref="dataSource"/>
+        </bean>
+
+        <!-- 数据源配置 -->
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+                <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+                <property name="jdbcUrl" value="jdbc:mysql://127.0.0.1:3306/nodb?serverTimezone=UTC"></property>
+                <property name="user" value="root"></property>
+                <property name="password" value="123456"></property>
+                <property name="initialPoolSize" value="3"></property>
+                <property name="maxPoolSize" value="10"></property>
+                <property name="maxStatements" value="100"></property>
+                <property name="acquireIncrement" value="2"></property>
+        </bean>
+
+        <bean id="register" class="lf.spring.action.Register" scope="prototype">
+                <property name="userServiceImpl" ref="userServiceImpl"/>
+        </bean>
+
+        <bean id="userdao" class="lf.spring.dao.UserDao">
+                <property name="sessionFactory" ref="sessionfactory"/>
+        </bean>
+
+        <bean id="userServiceImpl" class="lf.spring.service.UserServiceImpl">
+                <property name="userDao" ref="userdao"></property>
+        </bean>
+
+        <!-- 事务管理 -->
+        <bean id="txmanage" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+                <property name="sessionFactory" ref="sessionfactory"/>
+        </bean>
+
+</beans>
